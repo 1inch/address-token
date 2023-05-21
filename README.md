@@ -2,7 +2,7 @@
 
 Mainnet deployment: [0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E](https://etherscan.io/address/0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E)
 
-This smart contract is an ERC721 token contract that allows users to mint address-based NFTs and deploy smart contracts to those addresses.
+This smart contract is an ERC721 token contract that allows anyone to mint address-based NFTs and deploy smart contracts to the addresses. This NFT enables primary and secondary market of addresses for smart contracts.
 
 ## Overview
 
