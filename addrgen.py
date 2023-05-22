@@ -1,22 +1,30 @@
-from web3 import Web3
+from Crypto.Hash import keccak
+from multiprocessing import Pool
 
-PROXY_BYTECODE_HASH = '0x21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f'
+PROXY_BYTECODE_HASH = bytes.fromhex('21c35dbe1b344a2488cf3321d6ce542f8e9f305544ff09e4993a62319a497c1f')
 
-minter = ''  # specify address of the minter
+minter = bytes.fromhex('')  # minter address
+prefix = bytes.fromhex('ff1Add4e558Ce81fbdFD097550894CBdF37D448a9E')
+suffix = minter[-16:] + PROXY_BYTECODE_HASH
+required_prefix = bytes.fromhex('000000')
+d6_94 = bytes.fromhex('d694')
+suffix_01 = bytes.fromhex('01')
 
-for i in range(100000000):
-    seed = '0x' + hex(i)[2:].zfill(32)  # 16 bytes of randomness
-    salt = seed + minter[-32:]
+def check_seed(i):
+    seed = i.to_bytes(16, 'big')
 
-    proxy_addr = '0x' + Web3.solidity_keccak(
-        ['bytes1', 'address', 'bytes32', 'bytes32'],
-        ['0xff', '0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E', salt, PROXY_BYTECODE_HASH]
-    ).hex()[-40:]
+    keccak_obj = keccak.new(digest_bits=256)
+    keccak_obj.update(prefix + seed + suffix)
+    proxy_addr = keccak_obj.digest()[-20:]
 
-    final_addr = '0x' + Web3.solidity_keccak(
-        ['bytes2', 'address', 'bytes1'],
-        ['0xd694', Web3.to_checksum_address(proxy_addr), '0x01']
-    ).hex()[-40:]
+    keccak_obj = keccak.new(digest_bits=256)
+    keccak_obj.update(d6_94 + proxy_addr + suffix_01)
+    final_addr = keccak_obj.digest()[-20:]
 
-    if final_addr.startswith('0x0000'):
-        print('0x' + hex(i)[2:].zfill(32), final_addr)
+    if final_addr.startswith(required_prefix):
+        print('0x' + seed.hex(), '0x' + final_addr.hex())
+
+
+if __name__ == '__main__':
+    with Pool() as p:
+        p.map(check_seed, range(0, 1000000000))
