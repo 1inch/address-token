@@ -1,4 +1,4 @@
-# AddressToken Contract
+# 1inch Address NFT
 
 Mainnet deployment: [0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E](https://etherscan.io/address/0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E)
 
