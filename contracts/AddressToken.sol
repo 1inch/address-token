@@ -37,9 +37,9 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             '\t"external_url": "https://etherscan.io/address/', accountHex, '",\n',
             '\t"image": "ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc",\n',
             '\t"animation_url": "ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG",\n',
-            (attributes.length > 0
-                ? bytes.concat('\t"attributes": [\n', attributes, '\t]\n')
-                : bytes.concat('')),
+            '\t"attributes": [\n',
+                attributes,
+            '\t]\n',
         '}');
 
         return string(json);
@@ -55,18 +55,12 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
             if (accountHex[j] != letter || j == 41) {
                 if (length >= 4) {
-                    if (attributes.length > 0) {
-                        attributes = bytes.concat(attributes, ',\n');
-                    }
                     if (length + 2 == j) {
-                        attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Repeated prefix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+                        attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated prefix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+                    } else if (j == 41) {
+                        attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated suffix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                     }
-                    else if (j == 41) {
-                        attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Repeated suffix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
-                    }
-                    else {
-                        attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Repeated symbols ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
-                    }
+                    attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated symbol ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                 }
                 length = 1;
                 letter = accountHex[j];
@@ -76,13 +70,45 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return attributes;
     }
 
-    function _wordsAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        attributes = _wordAttributes(attributes, accountHex, 'dead');
-        attributes = _wordAttributes(attributes, accountHex, 'beef');
-        attributes = _wordAttributes(attributes, accountHex, 'c0ffee');
-        attributes = _wordAttributes(attributes, accountHex, 'def1');
-        attributes = _wordAttributes(attributes, accountHex, '1ee7');
+    function _mirroredAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+        for (uint256 len = 5; len < 30; len++) {
+            attributes = _mirroredLengthAttributes(attributes, accountHex, len);
+        }
         return attributes;
+    }
+
+    function _mirroredLengthAttributes(bytes memory attributes, bytes memory accountHex, uint256 len) private pure returns(bytes memory) {
+        uint256 found = 0;
+        for (uint256 i = 2; i < 42 - len; i++) {
+            uint256 matched = 0;
+            for (uint256 j = 0; j < len; j++) {
+                if (accountHex[i + j] == accountHex[41 - len - j]) {
+                    matched++;
+                }
+                else {
+                    break;
+                }
+            }
+
+            if (matched == len) {
+                found++;
+                i += len - 1;
+            }
+        }
+
+        if (found > 0) {
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Mirrored ', bytes(Strings.toString(len)), '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
+        }
+
+        return attributes;
+    }
+
+    function _wordsAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+        string[5] memory words = ['dead', 'beef', 'c0ffee', 'def1', '1ee7'];
+        for (uint256 i = 0; i < words.length; i++) {
+            attributes = _wordAttributes(attributes, accountHex, bytes(words[i]));
+        }
+       return attributes;
     }
 
     function _wordAttributes(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
