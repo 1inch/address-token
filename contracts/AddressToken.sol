@@ -18,14 +18,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return address(uint160(tokenId));
     }
 
-    function tokenURI(uint256 tokenId) public view override returns(string memory) {
+    function tokenURI(uint256 tokenId) public pure override returns(string memory) {
         return string.concat("data:application/json;base64,", Base64.encode(bytes(tokenJSON(tokenId))));
     }
 
-    function tokenJSON(uint256 tokenId) public view returns(string memory) {
+    function tokenJSON(uint256 tokenId) public pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
         (bytes memory attributes, bytes memory accountMask) = _repeatedAttributes('', accountHex, new bytes(42));
-        (attributes, accountMask) = _mirroredAttributes(attributes, accountHex, accountMask);
+        (attributes, accountMask) = _palindromAttributes(attributes, accountHex, accountMask);
         attributes = _wordsAttributes(attributes, accountHex);
         if (attributes.length > 0) {
             attributes = bytes.concat(attributes, '\n');
@@ -75,14 +75,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return (attributes, accountMask);
     }
 
-    function _mirroredAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private view returns(bytes memory, bytes memory) {
+    function _palindromAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
         for (uint256 len = 40; len >= 5; len--) {
-            (attributes, accountMask) = _mirroredLengthAttributes(attributes, accountHex, accountMask, len);
+            (attributes, accountMask) = _palindromLengthAttributes(attributes, accountHex, accountMask, len);
         }
         return (attributes, accountMask);
     }
 
-    function _mirroredLengthAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 len) private view returns(bytes memory, bytes memory) {
+    function _palindromLengthAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 len) private pure returns(bytes memory, bytes memory) {
         for (uint256 i = 2; i <= 42 - len; i++) {
             if (uint8(accountMask[i]) >= len) {
                 continue;
@@ -93,7 +93,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             }
 
             if (matched == len >> 1) {
-                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome ', bytes(Strings.toString(len)), '",\n\t\t\t"value": "', _substr(accountHex, i, len), '"\n\t\t}');
+                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": "', bytes(Strings.toString(len)), '"\n\t\t}');
 
                 for (uint256 t = 0; t < len; t++) {
                     accountMask[i + t] = bytes1(uint8(len - t));
@@ -104,19 +104,13 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return (attributes, accountMask);
     }
 
-    function _substr(bytes memory data, uint256 offset, uint256 length) private view returns(bytes memory result) {
-        result = new bytes(length);
-        assembly ("memory-safe") {  // solhint-disable-line no-inline-assembly
-            pop(staticcall(gas(), 0x04, add(add(data, 0x20), offset), length, add(result, 0x20), length))
-        }
-    }
-
     function _wordsAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        string[16] memory words = [
+        string[17] memory words = [
             'dead', 'beef', 'c0ffee', 'def1',
             '1ee7', '1337', 'babe', 'f00d',
             'dec0de', 'facade', 'decade', 'feed',
-            'face', 'c0de', 'c0c0a', 'caca0'
+            'face', 'c0de', 'c0c0a', 'caca0',
+            'cafe'
         ];
         for (uint256 i = 0; i < words.length; i++) {
             attributes = _wordAttributes(attributes, accountHex, bytes(words[i]));

@@ -58,7 +58,7 @@ describe('AddressToken', async function () {
                     attributes: [
                         { trait_type: 'Repeated suffix 0', value: 8 },
                         { trait_type: 'Repeated symbol 0', value: 8 },
-                        { trait_type: 'Palindrome 5', value: '4cec4' },
+                        { trait_type: 'Palindrome', value: 5 },
                     ],
                 },
             );
@@ -109,7 +109,7 @@ describe('AddressToken', async function () {
                         { trait_type: 'Repeated prefix 0', value: 4 },
                         { trait_type: 'Repeated symbol 0', value: 4 },
                         { trait_type: 'Repeated symbol 0', value: 4 },
-                        { trait_type: 'Palindrome 9', value: '000010000' },
+                        { trait_type: 'Palindrome', value: 9 },
                     ],
                 },
             );
@@ -203,7 +203,7 @@ describe('AddressToken', async function () {
                     image: 'ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc',
                     animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
                     attributes: [
-                        { trait_type: 'Palindrome 7', value: '1234321' },
+                        { trait_type: 'Palindrome', value: 7 },
                     ],
                 },
             );
@@ -226,7 +226,7 @@ describe('AddressToken', async function () {
                     image: 'ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc',
                     animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
                     attributes: [
-                        { trait_type: 'Palindrome 8', value: '12344321' },
+                        { trait_type: 'Palindrome', value: 8 },
                         { trait_type: 'Contains 1ee7', value: 1 },
                     ],
                 },
