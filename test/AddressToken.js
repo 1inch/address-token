@@ -58,6 +58,7 @@ describe('AddressToken', async function () {
                     attributes: [
                         { trait_type: 'Repeated suffix 0', value: 8 },
                         { trait_type: 'Repeated symbol 0', value: 8 },
+                        { trait_type: 'Palindrome 5', value: '4cec4' },
                     ],
                 },
             );
@@ -108,6 +109,7 @@ describe('AddressToken', async function () {
                         { trait_type: 'Repeated prefix 0', value: 4 },
                         { trait_type: 'Repeated symbol 0', value: 4 },
                         { trait_type: 'Repeated symbol 0', value: 4 },
+                        { trait_type: 'Palindrome 9', value: '000010000' },
                     ],
                 },
             );
@@ -161,7 +163,7 @@ describe('AddressToken', async function () {
             );
         });
 
-        it.only('should work for 0xdeF1Def1529c7271818C36a943AeC79a7125e324', async function () {
+        it('should work for 0xdeF1Def1529c7271818C36a943AeC79a7125e324', async function () {
             const { signer, addressToken } = await loadFixture(initContracts);
 
             const magic = '0x3de30ba013a07a2c8f7c2171254025de';
@@ -184,7 +186,7 @@ describe('AddressToken', async function () {
             );
         });
 
-        it.skip('should work for 0x123432108f4F503C347E35a3248EdD0ce2A7E163', async function () {
+        it('should work for 0x123432108f4F503C347E35a3248EdD0ce2A7E163', async function () {
             const { signer, addressToken } = await loadFixture(initContracts);
 
             const magic = '0x8a7d4302575114f31c61fd9421c39aca';
@@ -193,7 +195,6 @@ describe('AddressToken', async function () {
             await addressToken.mint(magic);
 
             const tokenURI = await addressToken.tokenURI(tokenId);
-            console.log(tokenURI);
             expect(JSON.parse(atob(tokenURI.substring(29)))).to.be.deep.equal(
                 {
                     name: 'Deploy to 0x123432108f4F503C347E35a3248EdD0ce2A7E163',
@@ -202,7 +203,31 @@ describe('AddressToken', async function () {
                     image: 'ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc',
                     animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
                     attributes: [
-                        { trait_type: 'Mirrored 1234321', value: 1 },
+                        { trait_type: 'Palindrome 7', value: '1234321' },
+                    ],
+                },
+            );
+        });
+
+        it('should work for 0x12344321EE786Ba6430e08D464b7e17264e7A69D', async function () {
+            const { signer, addressToken } = await loadFixture(initContracts);
+
+            const magic = '0xb4221b1445bed915c04a50916a93756c';
+            const { tokenId } = await addressToken.addressAndSaltForMagic(magic, signer.address);
+            expect(tokenId).to.be.equal('0x12344321EE786Ba6430e08D464b7e17264e7A69D');
+            await addressToken.mint(magic);
+
+            const tokenURI = await addressToken.tokenURI(tokenId);
+            expect(JSON.parse(atob(tokenURI.substring(29)))).to.be.deep.equal(
+                {
+                    name: 'Deploy to 0x12344321EE786Ba6430e08D464b7e17264e7A69D',
+                    description: 'Enables holder to deploy arbitrary smart contract to 0x12344321EE786Ba6430e08D464b7e17264e7A69D',
+                    external_url: 'https://etherscan.io/address/0x12344321EE786Ba6430e08D464b7e17264e7A69D',
+                    image: 'ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc',
+                    animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
+                    attributes: [
+                        { trait_type: 'Palindrome 8', value: '12344321' },
+                        { trait_type: 'Contains 1ee7', value: 1 },
                     ],
                 },
             );

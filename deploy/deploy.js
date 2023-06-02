@@ -1,4 +1,5 @@
 const hre = require('hardhat');
+const { ethers } = hre;
 const { getChainId } = hre;
 
 module.exports = async ({ deployments, getNamedAccounts }) => {

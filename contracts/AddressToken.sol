@@ -2,9 +2,10 @@
 
 pragma solidity 0.8.19;
 
-import "@openzeppelin/contracts/utils/Base64.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "solmate/src/utils/CREATE3.sol";
+import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
+import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import { CREATE3 } from "solmate/src/utils/CREATE3.sol";
 
 contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     error AccessDenied();
@@ -17,13 +18,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return address(uint160(tokenId));
     }
 
-    function tokenURI(uint256 tokenId) public pure override returns(string memory) {
+    function tokenURI(uint256 tokenId) public view override returns(string memory) {
         return string.concat("data:application/json;base64,", Base64.encode(bytes(tokenJSON(tokenId))));
     }
 
-    function tokenJSON(uint256 tokenId) public pure returns(string memory) {
+    function tokenJSON(uint256 tokenId) public view returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
-        bytes memory attributes = _repeatedAttributes('', accountHex);
+        (bytes memory attributes, bytes memory accountMask) = _repeatedAttributes('', accountHex, new bytes(42));
+        (attributes, accountMask) = _mirroredAttributes(attributes, accountHex, accountMask);
         attributes = _wordsAttributes(attributes, accountHex);
         if (attributes.length > 0) {
             attributes = bytes.concat(attributes, '\n');
@@ -45,66 +47,77 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return string(json);
     }
 
-    function _repeatedAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+    function _repeatedAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
         uint256 length = 1;
         bytes1 letter = accountHex[2];
-        for (uint256 j = 3; j < 42; j++) {
-            if (accountHex[j] == letter) {
+        for (uint256 i = 3; i < 42; i++) {
+            if (accountHex[i] == letter) {
                 length++;
             }
 
-            if (accountHex[j] != letter || j == 41) {
+            if (accountHex[i] != letter || i == 41) {
                 if (length >= 4) {
-                    if (length + 2 == j) {
+                    if (length + 2 == i) {
                         attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated prefix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
-                    } else if (j == 41) {
+                    } else if (i == 41) {
                         attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated suffix ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                     }
                     attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Repeated symbol ', letter, '",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+
+                    for (uint256 t = 0; t < length; t++) {
+                        accountMask[i + (accountHex[i] != letter ? 0 : 1) - length + t] = bytes1(uint8(length - t));
+                    }
                 }
                 length = 1;
-                letter = accountHex[j];
+                letter = accountHex[i];
             }
         }
-
-        return attributes;
+        return (attributes, accountMask);
     }
 
-    function _mirroredAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        for (uint256 len = 5; len < 30; len++) {
-            attributes = _mirroredLengthAttributes(attributes, accountHex, len);
+    function _mirroredAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private view returns(bytes memory, bytes memory) {
+        for (uint256 len = 40; len >= 5; len--) {
+            (attributes, accountMask) = _mirroredLengthAttributes(attributes, accountHex, accountMask, len);
         }
-        return attributes;
+        return (attributes, accountMask);
     }
 
-    function _mirroredLengthAttributes(bytes memory attributes, bytes memory accountHex, uint256 len) private pure returns(bytes memory) {
-        uint256 found = 0;
-        for (uint256 i = 2; i < 42 - len; i++) {
+    function _mirroredLengthAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 len) private view returns(bytes memory, bytes memory) {
+        for (uint256 i = 2; i <= 42 - len; i++) {
+            if (uint8(accountMask[i]) >= len) {
+                continue;
+            }
             uint256 matched = 0;
-            for (uint256 j = 0; j < len; j++) {
-                if (accountHex[i + j] == accountHex[41 - len - j]) {
-                    matched++;
-                }
-                else {
-                    break;
-                }
+            for (uint256 j = 0; j < len >> 1 && accountHex[i + j] == accountHex[i + len - 1 - j]; j++) {
+                matched++;
             }
 
-            if (matched == len) {
-                found++;
-                i += len - 1;
+            if (matched == len >> 1) {
+                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome ', bytes(Strings.toString(len)), '",\n\t\t\t"value": "', _substr(accountHex, i, len), '"\n\t\t}');
+
+                for (uint256 t = 0; t < len; t++) {
+                    accountMask[i + t] = bytes1(uint8(len - t));
+                }
             }
         }
 
-        if (found > 0) {
-            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Mirrored ', bytes(Strings.toString(len)), '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
-        }
+        return (attributes, accountMask);
+    }
 
-        return attributes;
+    function _substr(bytes memory data, uint256 offset, uint256 length) private view returns(bytes memory result) {
+        result = new bytes(length);
+        assembly ("memory-safe") {  // solhint-disable-line no-inline-assembly
+            pop(staticcall(gas(), 0x04, add(add(data, 0x20), offset), length, add(result, 0x20), length))
+        }
     }
 
     function _wordsAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        string[5] memory words = ['dead', 'beef', 'c0ffee', 'def1', '1ee7'];
+        string[16] memory words = [
+            'dead', 'beef', 'c0ffee', 'def1',
+            '1ee7', '1337', 'babe', 'f00d',
+            'dec0de', 'facade', 'decade', 'feed',
+            'face', 'c0de', 'c0c0a', 'caca0'
+        ];
         for (uint256 i = 0; i < words.length; i++) {
             attributes = _wordAttributes(attributes, accountHex, bytes(words[i]));
         }
@@ -143,7 +156,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function _checksumAddress(bytes memory hexAddress) private pure {
         bytes32 hash;
-        assembly {
+        assembly ("memory-safe") {  // solhint-disable-line no-inline-assembly
             hash := keccak256(add(hexAddress, 0x22), sub(mload(hexAddress), 2))
         }
         for (uint256 i = 2; i < 42; i++) {
@@ -180,7 +193,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     function deployAndCalls(address tokenId, bytes calldata creationCode, bytes[] calldata cds) external payable returns(address deployed) {
         deployed = deploy(tokenId, creationCode);
         for (uint256 i = 0; i < cds.length; i++) {
-            (bool success, bytes memory reason) = deployed.call(cds[i]);
+            (bool success, bytes memory reason) = deployed.call(cds[i]);  // solhint-disable-line avoid-low-level-calls
             if (!success) revert CallReverted(i, reason);
         }
     }
