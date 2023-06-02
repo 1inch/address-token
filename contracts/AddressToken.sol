@@ -93,7 +93,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             }
 
             if (matched == len >> 1) {
-                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": "', bytes(Strings.toString(len)), '"\n\t\t}');
+                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(len)), '\n\t\t}');
 
                 for (uint256 t = 0; t < len; t++) {
                     accountMask[i + t] = bytes1(uint8(len - t));
