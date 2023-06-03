@@ -96,7 +96,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             if (matched == length >> 1) {
                 if (i == 2) {
                     attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome prefix",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
-                } else if (i + matched == 42) {
+                } else if (i + length == 42) {
                     attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome suffix",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                 }
                 attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
@@ -138,7 +138,6 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function _wordAttributes(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
-        // Look for word in account
         uint256 found = 0;
         for (uint256 i = 2; i < 42; i++) {
             uint256 matched = 0;
@@ -161,7 +160,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             if (attributes.length > 0) {
                 attributes = bytes.concat(attributes, ',\n');
             }
-            attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Contains ', word, '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
+            attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Word ', word, '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
         }
 
         return attributes;
