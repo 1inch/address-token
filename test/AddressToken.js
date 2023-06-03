@@ -33,6 +33,20 @@ describe('AddressToken', async function () {
                     animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
                     attributes: [
                         { trait_type: 'Zero bytes', value: 1 },
+                        { trait_type: 'Symbols 0', value: 5 },
+                        { trait_type: 'Symbols 1', value: 3 },
+                        { trait_type: 'Symbols 2', value: 2 },
+                        { trait_type: 'Symbols 5', value: 3 },
+                        { trait_type: 'Symbols 6', value: 3 },
+                        { trait_type: 'Symbols 7', value: 3 },
+                        { trait_type: 'Symbols 8', value: 3 },
+                        { trait_type: 'Symbols 9', value: 2 },
+                        { trait_type: 'Symbols a', value: 1 },
+                        { trait_type: 'Symbols b', value: 5 },
+                        { trait_type: 'Symbols c', value: 3 },
+                        { trait_type: 'Symbols d', value: 1 },
+                        { trait_type: 'Symbols e', value: 2 },
+                        { trait_type: 'Symbols f', value: 4 },
                     ],
                 },
             );
@@ -179,24 +193,95 @@ describe('AddressToken', async function () {
                     ]);
                 });
             });
+
+            describe('Palindrome collisions', async function () {
+                it('should not detect "000000"[6] in 0x000000c83464bE863348c0577676b2B5DC2750D6', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0x8f513f5357b59aca438c10a6682b71e7');
+                    expect(address).to.be.equal('0x000000c83464bE863348c0577676b2B5DC2750D6');
+                    // Two sepatare checks means none of them should be present
+                    expect(attributes.map(attribute => attribute.trait_type)).to.not.include(
+                        'Palindrome prefix',
+                    );
+                    expect(attributes.map(attribute => attribute.trait_type)).to.not.include(
+                        'Palindrome',
+                    );
+
+                    // Check out map and ".to.include" works on "Repeated prefix 0"
+                    expect(attributes.map(attribute => attribute.trait_type)).to.include(
+                        'Repeated prefix 0',
+                    );
+                });
+            });
+
+            describe('Palindrome longest', async function () {
+                // TODO: find 0x123321*12321*...*
+                it.skip('should detect "123321"[6] and not detect "012321"[5] in 0x123321f144216Fa0b27B8Cf9D182aC970A46d273', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0x2a04eee43c25d1a7f5dad31a4ee126bf');
+                    expect(address).to.be.equal('0x123321f144216Fa0b27B8Cf9D182aC970A46d273');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Palindrome', value: 6 },
+                    ]);
+                    expect(attributes).to.not.deep.include(
+                        { trait_type: 'Palindrome', value: 5 },
+                    );
+                });
+            });
         });
 
         describe('Words', async function () {
-            it('should detect 2 words "def1" in 0xdeF1Def1529c7271818C36a943AeC79a7125e324', async function () {
-                const { address, attributes } = await addressAndAttributesForMagic('0x3de30ba013a07a2c8f7c2171254025de');
-                expect(address).to.be.equal('0xdeF1Def1529c7271818C36a943AeC79a7125e324');
-                expect(attributes).to.include.deep.members([
-                    { trait_type: 'Word def1', value: 2 },
-                ]);
+            describe('Word prefix', async function () {
+                it('should detect "def1" in 0xdeF1Def1529c7271818C36a943AeC79a7125e324', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0x3de30ba013a07a2c8f7c2171254025de');
+                    expect(address).to.be.equal('0xdeF1Def1529c7271818C36a943AeC79a7125e324');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word prefix', value: 'def1' },
+                    ]);
+                });
+
+                it('should detect "dead" in 0xDEaDbeef3a622802249892685051dba97754dFa7', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0xe1d80650b3733e377736e969a7d4bc4a');
+                    expect(address).to.be.equal('0xDEaDbeef3a622802249892685051dba97754dFa7');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word prefix', value: 'dead' },
+                    ]);
+                });
             });
 
-            it('should detect "dead" and "beef" in 0xDEaDbeef3a622802249892685051dba97754dFa7', async function () {
-                const { address, attributes } = await addressAndAttributesForMagic('0xe1d80650b3733e377736e969a7d4bc4a');
-                expect(address).to.be.equal('0xDEaDbeef3a622802249892685051dba97754dFa7');
-                expect(attributes).to.include.deep.members([
-                    { trait_type: 'Word dead', value: 1 },
-                    { trait_type: 'Word beef', value: 1 },
-                ]);
+            describe('Word suffix', async function () {
+                it('should detect "c0ffee" in 0x82a98cE60D27F53b4520660e98Ccc58604C0ffEE', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0x5f8c33b8312021cc5f741fb1650c3ca3');
+                    expect(address).to.be.equal('0x82a98cE60D27F53b4520660e98Ccc58604C0ffEE');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word suffix', value: 'c0ffee' },
+                    ]);
+                });
+
+                it('should detect "caca0" in 0x66d34a0024434De4Ae38C21F21904855471cACa0', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0xdf8c45933c1e08372e505d0f83a98bf1');
+                    expect(address).to.be.equal('0x66d34a0024434De4Ae38C21F21904855471cACa0');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word suffix', value: 'caca0' },
+                    ]);
+                });
+            });
+
+            describe('Word middle', async function () {
+                it('should detect 2 words "def1" in 0xdeF1Def1529c7271818C36a943AeC79a7125e324', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0x3de30ba013a07a2c8f7c2171254025de');
+                    expect(address).to.be.equal('0xdeF1Def1529c7271818C36a943AeC79a7125e324');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word def1', value: 2 },
+                    ]);
+                });
+
+                it('should detect "dead" and "beef" in 0xDEaDbeef3a622802249892685051dba97754dFa7', async function () {
+                    const { address, attributes } = await addressAndAttributesForMagic('0xe1d80650b3733e377736e969a7d4bc4a');
+                    expect(address).to.be.equal('0xDEaDbeef3a622802249892685051dba97754dFa7');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word dead', value: 1 },
+                        { trait_type: 'Word beef', value: 1 },
+                    ]);
+                });
             });
         });
 
@@ -232,11 +317,11 @@ describe('AddressToken', async function () {
                 ]);
             });
 
-            it('should detect 15 zeros in 0x03f24d0D9F750E00009be0000f000954722a0235', async function () {
-                const { address, attributes } = await addressAndAttributesForMagic('0x64a85d0ebcba1b859ad5f47542e366c4');
-                expect(address).to.be.equal('0x03f24d0D9F750E00009be0000f000954722a0235');
+            it('should detect 17 zeros in 0x610001900000007Cae4d9d060aD7fDb0dc003600', async function () {
+                const { address, attributes } = await addressAndAttributesForMagic('0x64a85d0ebcba1bb76126f53b44e366c4');
+                expect(address).to.be.equal('0x610001900000007Cae4d9d060aD7fDb0dc003600');
                 expect(attributes).to.include.deep.members([
-                    { trait_type: 'Symbols 0', value: 15 },
+                    { trait_type: 'Symbols 0', value: 17 },
                 ]);
             });
         });

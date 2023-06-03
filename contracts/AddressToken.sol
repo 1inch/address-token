@@ -85,6 +85,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function _palindromPalindromOfLength(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory, bytes memory) {
+        bool longestPalindromFound = false;
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
                 continue;
@@ -100,7 +101,10 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
                 } else if (i + length == 42) {
                     attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome suffix",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                 }
-                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+                if (!longestPalindromFound) {
+                    attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+                }
+                longestPalindromFound = true;
 
                 for (uint256 t = 0; t < length; t++) {
                     accountMask[i + t] = bytes1(uint8(length - t));
@@ -126,7 +130,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function _detectSingleWord(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
-        uint256 found = 0;
+        uint256 count = 0;
         for (uint256 i = 2; i < 42; i++) {
             uint256 matched = 0;
             for (uint256 j = 0; j < word.length && i + j < 42; j++) {
@@ -139,16 +143,18 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             }
 
             if (matched == word.length) {
-                found++;
+                if (i == 2) {
+                    attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Word prefix",\n\t\t\t"value": "', word, '"\n\t\t}');
+                } else if (i + word.length == 42) {
+                    attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Word suffix",\n\t\t\t"value": "', word, '"\n\t\t}');
+                }
+                count++;
                 i += word.length - 1;
             }
         }
 
-        if (found > 0) {
-            if (attributes.length > 0) {
-                attributes = bytes.concat(attributes, ',\n');
-            }
-            attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Word ', word, '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
+        if (count > 0) {
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Word ', word, '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
         }
 
         return attributes;
