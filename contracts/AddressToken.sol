@@ -24,10 +24,11 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function tokenJSON(uint256 tokenId) public pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
-        (bytes memory attributes, bytes memory accountMask) = _repeatedAttributes('', accountHex, new bytes(42));
-        (attributes, accountMask) = _palindromAttributes(attributes, accountHex, accountMask);
-        attributes = _wordsAttributes(attributes, accountHex);
-        attributes = _countZeroBytesAttributes(attributes, accountHex);
+        (bytes memory attributes, bytes memory accountMask) = _detectRepetitions('', accountHex, new bytes(42));
+        (attributes, accountMask) = _detectPalindromes(attributes, accountHex, accountMask);
+        attributes = _detectWords(attributes, accountHex);
+        attributes = _detectZeroBytes(attributes, accountHex);
+        attributes = _detectSymbols(attributes, accountHex);
         if (attributes.length > 0) {
             attributes = bytes.concat(attributes, '\n');
         }
@@ -48,7 +49,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return string(json);
     }
 
-    function _repeatedAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
+    function _detectRepetitions(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
         uint256 length = 1;
         bytes1 letter = accountHex[2];
         for (uint256 i = 3; i < 42; i++) {
@@ -76,14 +77,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return (attributes, accountMask);
     }
 
-    function _palindromAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
+    function _detectPalindromes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
         for (uint256 length = 40; length >= 5; length--) {
-            (attributes, accountMask) = _palindromLengthAttributes(attributes, accountHex, accountMask, length);
+            (attributes, accountMask) = _palindromPalindromOfLength(attributes, accountHex, accountMask, length);
         }
         return (attributes, accountMask);
     }
 
-    function _palindromLengthAttributes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory, bytes memory) {
+    function _palindromPalindromOfLength(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory, bytes memory) {
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
                 continue;
@@ -110,7 +111,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         return (attributes, accountMask);
     }
 
-    function _wordsAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+    function _detectWords(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
         string[17] memory words = [
             'dead', 'beef', 'c0ffee', 'def1',
             '1ee7', '1337', 'babe', 'f00d',
@@ -119,25 +120,12 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             'cafe'
         ];
         for (uint256 i = 0; i < words.length; i++) {
-            attributes = _wordAttributes(attributes, accountHex, bytes(words[i]));
+            attributes = _detectSingleWord(attributes, accountHex, bytes(words[i]));
         }
         return attributes;
     }
 
-    function _countZeroBytesAttributes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        uint256 count = 0;
-        for (uint256 i = 2; i < 42; i+=2) {
-            if (accountHex[i] == '0' && accountHex[i + 1] == '0') {
-                count++;
-            }
-        }
-        if (count > 0) {
-            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Zero bytes",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
-        }
-        return attributes;
-    }
-
-    function _wordAttributes(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
+    function _detectSingleWord(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
         uint256 found = 0;
         for (uint256 i = 2; i < 42; i++) {
             uint256 matched = 0;
@@ -163,6 +151,34 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Word ', word, '",\n\t\t\t"value": ', bytes(Strings.toString(found)), '\n\t\t}');
         }
 
+        return attributes;
+    }
+
+    function _detectZeroBytes(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+        uint256 count = 0;
+        for (uint256 i = 2; i < 42; i += 2) {
+            if (accountHex[i] == '0' && accountHex[i + 1] == '0') {
+                count++;
+            }
+        }
+        if (count > 0) {
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Zero bytes",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
+        }
+        return attributes;
+    }
+
+    function _detectSymbols(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+        bytes memory counters = new bytes(256);
+        for (uint256 i = 2; i < 42; i++) {
+            counters[uint8(accountHex[i])] = bytes1(uint8(counters[uint8(accountHex[i])]) + 1);
+        }
+        bytes memory alphabet = "0123456789abcdef";
+        for (uint256 i = 0; i < alphabet.length; i++) {
+            uint256 count = uint8(counters[uint8(alphabet[i])]);
+            if (count > 0) {
+                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Symbols ', alphabet[i], '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
+            }
+        }
         return attributes;
     }
 
