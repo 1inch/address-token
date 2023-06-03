@@ -36,6 +36,8 @@ describe('AddressToken', async function () {
                         { trait_type: 'Symbols 0', value: 5 },
                         { trait_type: 'Symbols 1', value: 3 },
                         { trait_type: 'Symbols 2', value: 2 },
+                        { trait_type: 'Symbols 3', value: 0 },
+                        { trait_type: 'Symbols 4', value: 0 },
                         { trait_type: 'Symbols 5', value: 3 },
                         { trait_type: 'Symbols 6', value: 3 },
                         { trait_type: 'Symbols 7', value: 3 },
@@ -209,7 +211,7 @@ describe('AddressToken', async function () {
 
             describe('Palindrome longest', async function () {
                 // TODO: find 0x123321*12321*...*
-                it.skip('should detect "123321"[6] and not detect "012321"[5] in 0x123321f144216Fa0b27B8Cf9D182aC970A46d273', async function () {
+                it.skip('TODO: should detect "123321"[6] and not detect "12321"[5] in 0x123321*12321*', async function () {
                     const { address, attributes } = await addressAndAttributesForMagic('0x2a04eee43c25d1a7f5dad31a4ee126bf');
                     expect(address).to.be.equal('0x123321f144216Fa0b27B8Cf9D182aC970A46d273');
                     expect(attributes).to.include.deep.members([
@@ -316,6 +318,24 @@ describe('AddressToken', async function () {
                 expect(address).to.be.equal('0x610001900000007Cae4d9d060aD7fDb0dc003600');
                 expect(attributes).to.include.deep.members([
                     { trait_type: 'Symbols 0', value: 17 },
+                ]);
+            });
+        });
+
+        describe('Alphabets', async function () {
+            it('should detect digits only in 0x2514075651515207174073914419183071120562', async function () {
+                const { address, attributes } = await addressAndAttributesForMagic('0x5714660a3d10905e52462f01806d14b9');
+                expect(address).to.be.equal('0x2514075651515207174073914419183071120562');
+                expect(attributes).to.deep.include(
+                    { trait_type: 'Digits only' },
+                );
+                expect(attributes).to.include.deep.members([
+                    { trait_type: 'Symbols a', value: 0 },
+                    { trait_type: 'Symbols b', value: 0 },
+                    { trait_type: 'Symbols c', value: 0 },
+                    { trait_type: 'Symbols d', value: 0 },
+                    { trait_type: 'Symbols e', value: 0 },
+                    { trait_type: 'Symbols f', value: 0 },
                 ]);
             });
         });

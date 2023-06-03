@@ -29,6 +29,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         attributes = _detectWords(attributes, accountHex);
         attributes = _detectZeroBytes(attributes, accountHex);
         attributes = _detectSymbols(attributes, accountHex);
+        attributes = _detectAlphabets(attributes, accountHex);
         if (attributes.length > 0) {
             attributes = bytes.concat(attributes, '\n');
         }
@@ -181,9 +182,21 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         bytes memory alphabet = "0123456789abcdef";
         for (uint256 i = 0; i < alphabet.length; i++) {
             uint256 count = uint8(counters[uint8(alphabet[i])]);
-            if (count > 0) {
-                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Symbols ', alphabet[i], '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Symbols ', alphabet[i], '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
+        }
+        return attributes;
+    }
+
+    function _detectAlphabets(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
+        bool onlyDigits = true;
+        for (uint256 i = 2; i < 42; i++) {
+            if (accountHex[i] < '0' || accountHex[i] > '9') {
+                onlyDigits = false;
+                break;
             }
+        }
+        if (onlyDigits) {
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Digits only"\n\t\t}');
         }
         return attributes;
     }
