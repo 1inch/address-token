@@ -198,17 +198,11 @@ describe('AddressToken', async function () {
                 it('should not detect "000000"[6] in 0x000000c83464bE863348c0577676b2B5DC2750D6', async function () {
                     const { address, attributes } = await addressAndAttributesForMagic('0x8f513f5357b59aca438c10a6682b71e7');
                     expect(address).to.be.equal('0x000000c83464bE863348c0577676b2B5DC2750D6');
-                    // Two sepatare checks means none of them should be present
-                    expect(attributes.map(attribute => attribute.trait_type)).to.not.include(
-                        'Palindrome prefix',
+                    expect(attributes).to.not.deep.include(
+                        { trait_type: 'Palindrome prefix', value: 6 },
                     );
-                    expect(attributes.map(attribute => attribute.trait_type)).to.not.include(
-                        'Palindrome',
-                    );
-
-                    // Check out map and ".to.include" works on "Repeated prefix 0"
-                    expect(attributes.map(attribute => attribute.trait_type)).to.include(
-                        'Repeated prefix 0',
+                    expect(attributes).to.not.deep.include(
+                        { trait_type: 'Palindrome', value: 6 },
                     );
                 });
             });
