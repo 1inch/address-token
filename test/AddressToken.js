@@ -15,7 +15,7 @@ describe('AddressToken', async function () {
     }
 
     describe('Metadata', async function () {
-        it('should ba valid for 0xcC0E952B187C00B5EDF8f652B70F66AF8B91b701', async function () {
+        it('should be valid for 0xcC0E952B187C00B5EDF8f652B70F66AF8B91b701', async function () {
             const { signer, addressToken } = await loadFixture(initContracts);
 
             const magic = '0x00000000000000000000000000000000';
