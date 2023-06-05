@@ -1,9 +1,9 @@
 # 1inch Address NFT
 
-Mainnet deployment: [0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E](https://etherscan.io/address/0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E)
-OpenSea Marketplace: https://opensea.io/collection/1inch-address-nft-1
-CPU miner: https://github.com/1inch/address-token-miner
-GPU miner: https://github.com/1inch/ERADICATE3
+- Mainnet deployment: [0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E](https://etherscan.io/address/0x1Add4e558Ce81fbdFD097550894CBdF37D448a9E)
+- OpenSea Marketplace: https://opensea.io/collection/1inch-address-nft-1
+- CPU miner: https://github.com/1inch/address-token-miner
+- GPU miner: https://github.com/1inch/ERADICATE3
 
 This smart contract is an ERC721 token contract that allows anyone to mint address-based NFTs and deploy smart contracts to the addresses. This NFT enables primary and secondary market of addresses for smart contracts.
 
