@@ -217,7 +217,6 @@ describe('AddressToken', async function () {
             describe('Palindrome longest', async function () {
                 it('should detect "123321"[6] and not detect "45654"[5] in 0x123321E45654F111222333444555666777888999', async function () {
                     const attributes = await attributesForAddress('0x123321E45654F111222333444555666777888999');
-                    console.log(attributes);
                     expect(attributes).to.include.deep.members([
                         { trait_type: 'Palindrome', value: 6 },
                     ]);
