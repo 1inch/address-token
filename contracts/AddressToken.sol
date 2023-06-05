@@ -12,6 +12,8 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     error RemintForbidden();
     error CallReverted(uint256, bytes);
 
+    bytes32 public constant _LOW_128_BIT_MASK = 0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff;
+
     mapping(address tokenId => bytes32 salt) public salts;
 
     function addressForTokenId(uint256 tokenId) external pure returns(address) {
@@ -203,7 +205,8 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function addressAndSaltForMagic(bytes16 magic, address account) public view returns(address tokenId, bytes32 salt) {
-        salt = bytes32(uint256(type(uint128).max & uint160(account))) | bytes32(magic);
+        bytes32 hashedAccount = keccak256(abi.encodePacked(account));
+        salt = (_LOW_128_BIT_MASK & hashedAccount) | bytes32(magic);
         tokenId = CREATE3.getDeployed(salt);
     }
 
