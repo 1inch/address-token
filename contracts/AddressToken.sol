@@ -24,15 +24,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function tokenJSON(uint256 tokenId) public pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
-        (bytes memory attributes, bytes memory accountMask) = _detectRepetitions('', accountHex, new bytes(42));
-        (attributes, accountMask) = _detectPalindromes(attributes, accountHex, accountMask);
+        bytes memory accountMask = new bytes(42);
+        bytes memory attributes = '';
+        attributes = _detectRepetitions('', accountHex, accountMask);
+        attributes = _detectPalindromes(attributes, accountHex, accountMask);
         attributes = _detectWords(attributes, accountHex);
         attributes = _detectZeroBytes(attributes, accountHex);
         attributes = _detectSymbols(attributes, accountHex);
         attributes = _detectAlphabets(attributes, accountHex);
-        if (attributes.length > 0) {
-            attributes = bytes.concat(attributes, '\n');
-        }
 
         _checksumAddress(accountHex);
 
@@ -43,14 +42,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             '\t"image": "ipfs://QmZW3TTdtK87ktxmh6PG5UumbtoWXU8rVBApo65oknekmc",\n',
             '\t"animation_url": "ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG",\n',
             '\t"attributes": [\n',
-                attributes,
+                attributes, bytes(attributes.length > 0 ? '\n' : ''),
             '\t]\n',
         '}');
 
         return string(json);
     }
 
-    function _detectRepetitions(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
+    function _detectRepetitions(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory) {
         uint256 length = 1;
         bytes1 letter = accountHex[2];
         for (uint256 i = 3; i < 42; i++) {
@@ -75,17 +74,17 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
                 letter = accountHex[i];
             }
         }
-        return (attributes, accountMask);
+        return attributes;
     }
 
-    function _detectPalindromes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory, bytes memory) {
+    function _detectPalindromes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory) {
         for (uint256 length = 40; length >= 5; length--) {
-            (attributes, accountMask) = _palindromPalindromOfLength(attributes, accountHex, accountMask, length);
+            attributes = _palindromPalindromOfLength(attributes, accountHex, accountMask, length);
         }
-        return (attributes, accountMask);
+        return attributes;
     }
 
-    function _palindromPalindromOfLength(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory, bytes memory) {
+    function _palindromPalindromOfLength(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory) {
         bool longestPalindromFound = false;
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
@@ -113,7 +112,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
             }
         }
 
-        return (attributes, accountMask);
+        return attributes;
     }
 
     function _detectWords(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
