@@ -12,7 +12,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     error RemintForbidden();
     error CallReverted(uint256, bytes);
 
-    bytes32 public constant _LOW_128_BIT_MASK = 0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff;
+    bytes32 private constant _LOW_128_BIT_MASK = 0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff;
 
     mapping(address /* tokenId */ => bytes32 /* salt */) public salts;
 

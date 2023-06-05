@@ -16,25 +16,25 @@ describe('AddressToken', async function () {
 
     describe('Magics', async function () {
         it('should have proper magic for 0x000000a6C09bd7f6Ba10642DBaCe1bE60565A2F8', async function () {
-            const { signer, addressToken } = await loadFixture(initContracts);
+            const { addressToken } = await loadFixture(initContracts);
             const tokenId = await addressToken.callStatic.mint('0x83e07be8812a93bc76504bc8c10f79c7');
             expect(tokenId).to.be.equal('0x000000a6C09bd7f6Ba10642DBaCe1bE60565A2F8');
         });
 
         it('should have proper magic for 0xc07EC7da97D7444F738e955f28F6C91d15000000', async function () {
-            const { signer, addressToken } = await loadFixture(initContracts);
+            const { addressToken } = await loadFixture(initContracts);
             const tokenId = await addressToken.callStatic.mint('0xa245d3d1f4bc5e70beb85db24b6f4df1');
             expect(tokenId).to.be.equal('0xc07EC7da97D7444F738e955f28F6C91d15000000');
         });
 
         it('should have proper magic for 0x6828985368578258349260531646495303581057', async function () {
-            const { signer, addressToken } = await loadFixture(initContracts);
+            const { addressToken } = await loadFixture(initContracts);
             const tokenId = await addressToken.callStatic.mint('0x4a7beee747938760a0fbd441e3ce93f5');
             expect(tokenId).to.be.equal('0x6828985368578258349260531646495303581057');
         });
 
         it('should have proper magic for 0x6666665e4d6a736100A7D8eD5dfBacDf99f29DFf', async function () {
-            const { signer, addressToken } = await loadFixture(initContracts);
+            const { addressToken } = await loadFixture(initContracts);
             const tokenId = await addressToken.callStatic.mint('0x057b69fd8b880100129d0f0000000000');
             expect(tokenId).to.be.equal('0x6666665e4d6a736100A7D8eD5dfBacDf99f29DFf');
         });
@@ -74,7 +74,7 @@ describe('AddressToken', async function () {
                         { trait_type: 'Symbol c', value: 1 },
                         { trait_type: 'Symbol d', value: 3 },
                         { trait_type: 'Symbol e', value: 1 },
-                        { trait_type: 'Symbol f', value: 3 }
+                        { trait_type: 'Symbol f', value: 3 },
                     ],
                 },
             );
@@ -83,7 +83,7 @@ describe('AddressToken', async function () {
 
     describe('Attributes', async function () {
         async function attributesForAddress (address) {
-            const { signer, addressToken } = await loadFixture(initContracts);
+            const { addressToken } = await loadFixture(initContracts);
             const json = await addressToken.tokenJSON(address);
             return JSON.parse(json).attributes;
         };
@@ -319,9 +319,6 @@ describe('AddressToken', async function () {
         describe('Alphabets', async function () {
             it('should detect digits only in 0x2514075651515207174073914419183071120562', async function () {
                 const attributes = await attributesForAddress('0x2514075651515207174073914419183071120562');
-                // expect(attributes).to.deep.include(
-
-                // );
                 expect(attributes).to.include.deep.members([
                     { trait_type: 'Digits only' },
                     { trait_type: 'Symbol a', value: 0 },
