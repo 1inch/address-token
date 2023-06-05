@@ -14,7 +14,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     bytes32 public constant _LOW_128_BIT_MASK = 0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff;
 
-    mapping(address tokenId => bytes32 salt) public salts;
+    mapping(address /* tokenId */ => bytes32 /* salt */) public salts;
 
     function addressForTokenId(uint256 tokenId) external pure returns(address) {
         return address(uint160(tokenId));
