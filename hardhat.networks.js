@@ -1,11 +1,11 @@
 const networks = {
     // Uncomment this to use hardhat forking
-    hardhat: {
-        forking: {
-            url: process.env.MAINNET_RPC_URL,
-        },
-        chainId: Number(process.env.FORK_CHAIN_ID) || 31337,
-    },
+    // hardhat: {
+    //     forking: {
+    //         url: process.env.MAINNET_RPC_URL,
+    //     },
+    //     chainId: Number(process.env.FORK_CHAIN_ID) || 31337,
+    // },
 };
 const etherscan = { apiKey: {} };
 
