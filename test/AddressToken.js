@@ -33,22 +33,22 @@ describe('AddressToken', async function () {
                     animation_url: 'ipfs://QmZKp3K7oyDFPkVUXUgDKqZ6RcLZY7QW267JvXRTLW1qaG',
                     attributes: [
                         { trait_type: 'Zero bytes', value: 1 },
-                        { trait_type: 'Symbols 0', value: 5 },
-                        { trait_type: 'Symbols 1', value: 3 },
-                        { trait_type: 'Symbols 2', value: 2 },
-                        { trait_type: 'Symbols 3', value: 0 },
-                        { trait_type: 'Symbols 4', value: 0 },
-                        { trait_type: 'Symbols 5', value: 3 },
-                        { trait_type: 'Symbols 6', value: 3 },
-                        { trait_type: 'Symbols 7', value: 3 },
-                        { trait_type: 'Symbols 8', value: 3 },
-                        { trait_type: 'Symbols 9', value: 2 },
-                        { trait_type: 'Symbols a', value: 1 },
-                        { trait_type: 'Symbols b', value: 5 },
-                        { trait_type: 'Symbols c', value: 3 },
-                        { trait_type: 'Symbols d', value: 1 },
-                        { trait_type: 'Symbols e', value: 2 },
-                        { trait_type: 'Symbols f', value: 4 },
+                        { trait_type: 'Symbol 0', value: 5 },
+                        { trait_type: 'Symbol 1', value: 3 },
+                        { trait_type: 'Symbol 2', value: 2 },
+                        { trait_type: 'Symbol 3', value: 0 },
+                        { trait_type: 'Symbol 4', value: 0 },
+                        { trait_type: 'Symbol 5', value: 3 },
+                        { trait_type: 'Symbol 6', value: 3 },
+                        { trait_type: 'Symbol 7', value: 3 },
+                        { trait_type: 'Symbol 8', value: 3 },
+                        { trait_type: 'Symbol 9', value: 2 },
+                        { trait_type: 'Symbol a', value: 1 },
+                        { trait_type: 'Symbol b', value: 5 },
+                        { trait_type: 'Symbol c', value: 3 },
+                        { trait_type: 'Symbol d', value: 1 },
+                        { trait_type: 'Symbol e', value: 2 },
+                        { trait_type: 'Symbol f', value: 4 },
                     ],
                 },
             );
@@ -296,20 +296,20 @@ describe('AddressToken', async function () {
                 const { address, attributes } = await addressAndAttributesForMagic('0x00000000000000000000000000000000');
                 expect(address).to.be.equal('0xcC0E952B187C00B5EDF8f652B70F66AF8B91b701');
                 expect(attributes).to.include.deep.members([
-                    { trait_type: 'Symbols 0', value: 5 },
-                    { trait_type: 'Symbols 1', value: 3 },
-                    { trait_type: 'Symbols 2', value: 2 },
-                    { trait_type: 'Symbols 5', value: 3 },
-                    { trait_type: 'Symbols 6', value: 3 },
-                    { trait_type: 'Symbols 7', value: 3 },
-                    { trait_type: 'Symbols 8', value: 3 },
-                    { trait_type: 'Symbols 9', value: 2 },
-                    { trait_type: 'Symbols a', value: 1 },
-                    { trait_type: 'Symbols b', value: 5 },
-                    { trait_type: 'Symbols c', value: 3 },
-                    { trait_type: 'Symbols d', value: 1 },
-                    { trait_type: 'Symbols e', value: 2 },
-                    { trait_type: 'Symbols f', value: 4 },
+                    { trait_type: 'Symbol 0', value: 5 },
+                    { trait_type: 'Symbol 1', value: 3 },
+                    { trait_type: 'Symbol 2', value: 2 },
+                    { trait_type: 'Symbol 5', value: 3 },
+                    { trait_type: 'Symbol 6', value: 3 },
+                    { trait_type: 'Symbol 7', value: 3 },
+                    { trait_type: 'Symbol 8', value: 3 },
+                    { trait_type: 'Symbol 9', value: 2 },
+                    { trait_type: 'Symbol a', value: 1 },
+                    { trait_type: 'Symbol b', value: 5 },
+                    { trait_type: 'Symbol c', value: 3 },
+                    { trait_type: 'Symbol d', value: 1 },
+                    { trait_type: 'Symbol e', value: 2 },
+                    { trait_type: 'Symbol f', value: 4 },
                 ]);
             });
 
@@ -317,7 +317,7 @@ describe('AddressToken', async function () {
                 const { address, attributes } = await addressAndAttributesForMagic('0x64a85d0ebcba1bb76126f53b44e366c4');
                 expect(address).to.be.equal('0x610001900000007Cae4d9d060aD7fDb0dc003600');
                 expect(attributes).to.include.deep.members([
-                    { trait_type: 'Symbols 0', value: 17 },
+                    { trait_type: 'Symbol 0', value: 17 },
                 ]);
             });
         });
@@ -330,12 +330,12 @@ describe('AddressToken', async function () {
                     { trait_type: 'Digits only' },
                 );
                 expect(attributes).to.include.deep.members([
-                    { trait_type: 'Symbols a', value: 0 },
-                    { trait_type: 'Symbols b', value: 0 },
-                    { trait_type: 'Symbols c', value: 0 },
-                    { trait_type: 'Symbols d', value: 0 },
-                    { trait_type: 'Symbols e', value: 0 },
-                    { trait_type: 'Symbols f', value: 0 },
+                    { trait_type: 'Symbol a', value: 0 },
+                    { trait_type: 'Symbol b', value: 0 },
+                    { trait_type: 'Symbol c', value: 0 },
+                    { trait_type: 'Symbol d', value: 0 },
+                    { trait_type: 'Symbol e', value: 0 },
+                    { trait_type: 'Symbol f', value: 0 },
                 ]);
             });
         });

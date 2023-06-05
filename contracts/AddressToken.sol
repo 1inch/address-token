@@ -26,7 +26,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
         bytes memory accountMask = new bytes(42);
         bytes memory attributes = '';
-        attributes = _detectRepetitions('', accountHex, accountMask);
+        attributes = _detectRepetitions(attributes, accountHex, accountMask);
         attributes = _detectPalindromes(attributes, accountHex, accountMask);
         attributes = _detectWords(attributes, accountHex);
         attributes = _detectZeroBytes(attributes, accountHex);
@@ -78,14 +78,14 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function _detectPalindromes(bytes memory attributes, bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory) {
-        for (uint256 length = 40; length >= 5; length--) {
+        uint256 initialLength = attributes.length;
+        for (uint256 length = 40; length >= 5 && attributes.length == initialLength; length--) {
             attributes = _palindromPalindromOfLength(attributes, accountHex, accountMask, length);
         }
         return attributes;
     }
 
     function _palindromPalindromOfLength(bytes memory attributes, bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory) {
-        bool longestPalindromFound = false;
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
                 continue;
@@ -101,14 +101,8 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
                 } else if (i + length == 42) {
                     attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome suffix",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
                 }
-                if (!longestPalindromFound) {
-                    attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
-                }
-                longestPalindromFound = true;
-
-                for (uint256 t = 0; t < length; t++) {
-                    accountMask[i + t] = bytes1(uint8(length - t));
-                }
+                attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Palindrome",\n\t\t\t"value": ', bytes(Strings.toString(length)), '\n\t\t}');
+                break;
             }
         }
 
@@ -116,12 +110,12 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
     }
 
     function _detectWords(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
-        string[17] memory words = [
+        string[19] memory words = [
             'dead', 'beef', 'c0ffee', 'def1',
             '1ee7', '1337', 'babe', 'f00d',
             'dec0de', 'facade', 'decade', 'feed',
             'face', 'c0de', 'c0c0a', 'caca0',
-            'cafe'
+            'cafe', '5eed', '5e1f'
         ];
         for (uint256 i = 0; i < words.length; i++) {
             attributes = _detectSingleWord(attributes, accountHex, bytes(words[i]));
@@ -131,15 +125,10 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function _detectSingleWord(bytes memory attributes, bytes memory accountHex, bytes memory word) private pure returns(bytes memory) {
         uint256 count = 0;
-        for (uint256 i = 2; i < 42; i++) {
+        for (uint256 i = 2; i <= 42 - word.length; i++) {
             uint256 matched = 0;
-            for (uint256 j = 0; j < word.length && i + j < 42; j++) {
-                if (accountHex[i + j] == word[j]) {
-                    matched++;
-                }
-                else {
-                    break;
-                }
+            for (uint256 j = 0; j < word.length && accountHex[i + j] == word[j]; j++) {
+                matched++;
             }
 
             if (matched == word.length) {
@@ -167,9 +156,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
                 count++;
             }
         }
-        if (count > 0) {
-            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Zero bytes",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
-        }
+        attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Zero bytes",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
         return attributes;
     }
 
@@ -181,21 +168,27 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         bytes memory alphabet = "0123456789abcdef";
         for (uint256 i = 0; i < alphabet.length; i++) {
             uint256 count = uint8(counters[uint8(alphabet[i])]);
-            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Symbols ', alphabet[i], '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Symbol ', alphabet[i], '",\n\t\t\t"value": ', bytes(Strings.toString(count)), '\n\t\t}');
         }
         return attributes;
     }
 
     function _detectAlphabets(bytes memory attributes, bytes memory accountHex) private pure returns(bytes memory) {
         bool onlyDigits = true;
+        bool onlyLetters = true;
         for (uint256 i = 2; i < 42; i++) {
             if (accountHex[i] < '0' || accountHex[i] > '9') {
                 onlyDigits = false;
-                break;
+            }
+            if (accountHex[i] < 'a' || accountHex[i] > 'f') {
+                onlyLetters = false;
             }
         }
         if (onlyDigits) {
             attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Digits only"\n\t\t}');
+        }
+        if (onlyLetters) {
+            attributes = bytes.concat(attributes, bytes(attributes.length > 0 ? ',\n' : ''), '\t\t{\n\t\t\t"trait_type": "Letters only"\n\t\t}');
         }
         return attributes;
     }
