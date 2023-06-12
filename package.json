@@ -29,7 +29,7 @@
     "hardhat-dependency-compiler": "1.1.3",
     "hardhat-deploy": "0.11.30",
     "hardhat-gas-reporter": "1.0.9",
-    "hardhat-tracer": "2.2.2",
+    "hardhat-tracer": "2.3.5",
     "rimraf": "5.0.1",
     "solc": "0.8.20",
     "solhint": "3.4.1",
