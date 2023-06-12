@@ -1235,11 +1235,6 @@
   dependencies:
     "@types/node" "*"
 
-"@ungap/structured-clone@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
-  integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
-
 "@uniswap/permit2-sdk@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@uniswap/permit2-sdk/-/permit2-sdk-1.2.0.tgz#ed86440a87a6c318169c8e6f161fc263ad040891"
@@ -3329,12 +3324,11 @@ hardhat-gas-reporter@1.0.9:
     eth-gas-reporter "^0.2.25"
     sha1 "^1.1.1"
 
-hardhat-tracer@2.3.4:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/hardhat-tracer/-/hardhat-tracer-2.3.4.tgz#9ed17e848c89d0221761e39a980c1a2ef6a0f94a"
-  integrity sha512-SqeUuwzLRHPjvOwSQnSRntAq5KCW17QRuoT9vPgcS9SQrUe0WxJGlft/NS3yotDDbwypSyBy7wHyhnxfJVYAjQ==
+hardhat-tracer@2.3.5:
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/hardhat-tracer/-/hardhat-tracer-2.3.5.tgz#3fafd1a442b1aa76fe881c8af840fbc6c39e4332"
+  integrity sha512-oUuEq7wvLsRuhUk0W8THazUjqlnSfWDwRn6fBt0ZEWNjn8AP7Ww171M0/VpvuUuCJ7V3WNzDHOWjzEJGT/8puA==
   dependencies:
-    "@ungap/structured-clone" "^1.2.0"
     chalk "^4.1.2"
     ethers "^5.6.1"
 
