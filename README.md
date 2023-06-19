@@ -1,7 +1,7 @@
 # 1inch Address NFT
 
 - Mainnet deployment: [0x1ADD4E55ecEffd795B01d22203D280c93A2F1dc3](https://etherscan.io/address/0x1ADD4E55ecEffd795B01d22203D280c93A2F1dc3)
-- OpenSea Marketplace: https://opensea.io/collection/1inch-address-nft-1
+- OpenSea Marketplace: https://opensea.io/collection/1inch-address-nft-2
 - CPU miner: https://github.com/1inch/address-token-miner
 - GPU miner: https://github.com/1inch/ERADICATE3
 
