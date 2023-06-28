@@ -78,17 +78,12 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
         metadataContract = _metadataContract;
     }
 
-    function upgradeMetadataContract(AddressTokenMetadata _metadataContract) external onlyOwner {
-        metadataContract = _metadataContract;
-        emit BatchMetadataUpdate(0, type(uint256).max);
-    }
-
     function addressForTokenId(uint256 tokenId) external pure returns(address) {
         return address(uint160(tokenId));
     }
 
     function tokenURI(uint256 tokenId) public view override returns(string memory) {
-        return string.concat("data:application/json;base64,", Base64.encode(bytes(metadataContract.tokenJSON(tokenId))));
+        return string.concat("data:application/json;base64,", Base64.encode(bytes(tokenJSON(tokenId))));
     }
 
     function tokenJSON(uint256 tokenId) public view returns(string memory) {
@@ -125,5 +120,10 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
             (bool success, bytes memory reason) = deployed.call(cds[i]);  // solhint-disable-line avoid-low-level-calls
             if (!success) revert CallReverted(i, reason);
         }
+    }
+
+    function upgradeMetadataContract(AddressTokenMetadata _metadataContract) external onlyOwner {
+        metadataContract = _metadataContract;
+        emit BatchMetadataUpdate(0, type(uint256).max);
     }
 }
