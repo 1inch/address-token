@@ -275,6 +275,13 @@ describe('AddressToken', async function () {
                         { trait_type: 'Word beef', value: 1 },
                     ]);
                 });
+
+                it('should detect dead twice in deadead', async function () {
+                    const attributes = await attributesForAddress('0xf1f1f1f1f1deadeadf1f1f1f1f1f1f1f1f1f1f1f');
+                    expect(attributes).to.include.deep.members([
+                        { trait_type: 'Word dead', value: 2 },
+                    ]);
+                });
             });
         });
 
