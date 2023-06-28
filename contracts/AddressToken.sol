@@ -274,7 +274,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         (tokenId, salt) = addressAndSaltForMagic(magic, account);
         if (salts[tokenId] != 0) revert RemintForbidden();
         salts[tokenId] = salt;
-        _mint(account, uint160(tokenId));
+        _safeMint(account, uint160(tokenId));
     }
 
     function deploy(address tokenId, bytes calldata creationCode) public payable returns(address deployed) {
