@@ -122,7 +122,8 @@ contract AddressTokenMetadata {
                     attributes = bytes.concat(attributes, '\t\t{\n\t\t\t"trait_type": "Word suffix",\n\t\t\t"value": "', word, '"\n\t\t},\n');
                 }
                 count++;
-                i += word.length - 1;
+                // -1 beacause of i++ in the loop and extra -1 to account for possible deadead overlap
+                i += word.length - 2;
             }
         }
 
