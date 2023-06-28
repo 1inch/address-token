@@ -142,11 +142,11 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function _detectLongestPalindrome(bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory attributes) {
         for (uint256 length = 40; length >= 5 && attributes.length == 0; length--) {
-            attributes = _palindromPalindromOfLength(accountHex, accountMask, length);
+            attributes = _palindromOfLength(accountHex, accountMask, length);
         }
     }
 
-    function _palindromPalindromOfLength(bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory attributes) {
+    function _palindromOfLength(bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory attributes) {
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
                 continue;
