@@ -8,7 +8,7 @@ describe('AddressToken', async function () {
         const AddressToken = await ethers.getContractFactory('AddressToken');
         const addressToken = await AddressToken.deploy(ethers.constants.AddressZero);
         await addressToken.deployed();
-        const AddressTokenMetadata = await(ethers.getContractFactory('AddressTokenMetadata'));
+        const AddressTokenMetadata = await ethers.getContractFactory('AddressTokenMetadata');
         const addressTokenMetadata = await AddressTokenMetadata.deploy();
         await addressTokenMetadata.deployed();
         // this is done in this particular order to keep AddressToken at 0x5FbDB2315678afecb367f032d93F642f64180aa3
