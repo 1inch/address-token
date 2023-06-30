@@ -7,6 +7,7 @@ import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 contract AddressTokenMetadata {
     function tokenJSON(uint256 tokenId) external pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
+        // accountMask[i] will store the length of the repetition of accountHex[i] starting at the index i
         bytes memory accountMask = new bytes(42);
         bytes memory attributes = bytes.concat(
             _detectRepetitions(accountHex, accountMask),
