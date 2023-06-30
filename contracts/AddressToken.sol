@@ -81,6 +81,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function tokenJSON(uint256 tokenId) public pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
+        // accountMask[i] will store the length of the repetition of accountHex[i] starting at the index i
         bytes memory accountMask = new bytes(42);
         bytes memory attributes = bytes.concat(
             _detectRepetitions(accountHex, accountMask),
