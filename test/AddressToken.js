@@ -45,7 +45,7 @@ describe('AddressToken', async function () {
             const { signer, addressToken } = await loadFixture(initContracts);
 
             const magic = '0x00000000000000000000000000000000';
-            const { tokenId } = await addressToken.addressAndSaltForMagic(magic, signer.address);
+            const { tokenId } = await addressToken.getTokenIdAndSalt(magic, signer.address);
             expect(tokenId).to.be.equal('0x89E802345bfB6CaD865fb5935fb6749D65D25764');
             await addressToken.mint(magic);
 

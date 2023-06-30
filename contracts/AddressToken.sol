@@ -142,11 +142,11 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function _detectLongestPalindrome(bytes memory accountHex, bytes memory accountMask) private pure returns(bytes memory attributes) {
         for (uint256 length = 40; length >= 5 && attributes.length == 0; length--) {
-            attributes = _palindromPalindromOfLength(accountHex, accountMask, length);
+            attributes = _palindromOfLength(accountHex, accountMask, length);
         }
     }
 
-    function _palindromPalindromOfLength(bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory attributes) {
+    function _palindromOfLength(bytes memory accountHex, bytes memory accountMask, uint256 length) private pure returns(bytes memory attributes) {
         for (uint256 i = 2; i <= 42 - length; i++) {
             if (uint8(accountMask[i]) >= length) {
                 continue;
@@ -260,7 +260,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
         }
     }
 
-    function addressAndSaltForMagic(bytes16 magic, address account) public view returns(address tokenId, bytes32 salt) {
+    function getTokenIdAndSalt(bytes16 magic, address account) public view returns(address tokenId, bytes32 salt) {
         bytes32 hashedAccount = keccak256(abi.encodePacked(account));
         salt = (_LOW_128_BIT_MASK & hashedAccount) | bytes32(magic);
         tokenId = CREATE3.getDeployed(salt);
@@ -272,10 +272,10 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT") {
 
     function mintFor(bytes16 magic, address account) public returns(address tokenId) {
         bytes32 salt;
-        (tokenId, salt) = addressAndSaltForMagic(magic, account);
+        (tokenId, salt) = getTokenIdAndSalt(magic, account);
         if (salts[tokenId] != 0) revert RemintForbidden();
         salts[tokenId] = salt;
-        _mint(account, uint160(tokenId));
+        _safeMint(account, uint160(tokenId));
     }
 
     function deploy(address tokenId, bytes calldata creationCode) public payable returns(address deployed) {
