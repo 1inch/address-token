@@ -90,7 +90,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
         return metadataContract.tokenJSON(tokenId);
     }
 
-    function addressAndSaltForMagic(bytes16 magic, address account) public view returns(address tokenId, bytes32 salt) {
+    function getTokenIdAndSalt(bytes16 magic, address account) public view returns(address tokenId, bytes32 salt) {
         bytes32 hashedAccount = keccak256(abi.encodePacked(account));
         salt = (_LOW_128_BIT_MASK & hashedAccount) | bytes32(magic);
         tokenId = CREATE3.getDeployed(salt);
@@ -102,10 +102,10 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
 
     function mintFor(bytes16 magic, address account) public returns(address tokenId) {
         bytes32 salt;
-        (tokenId, salt) = addressAndSaltForMagic(magic, account);
+        (tokenId, salt) = getTokenIdAndSalt(magic, account);
         if (salts[tokenId] != 0) revert RemintForbidden();
         salts[tokenId] = salt;
-        _mint(account, uint160(tokenId));
+        _safeMint(account, uint160(tokenId));
     }
 
     function deploy(address tokenId, bytes calldata creationCode) public payable returns(address deployed) {
