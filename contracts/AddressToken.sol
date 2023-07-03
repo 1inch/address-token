@@ -62,7 +62,7 @@ import { IERC4906 } from "@openzeppelin/contracts/interfaces/IERC4906.sol";
 import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { CREATE3 } from "solmate/src/utils/CREATE3.sol";
-import { AddressTokenMetadata } from "./AddressTokenMetadata.sol";
+import { IAddressTokenMetadata } from "./interfaces/IAddressTokenMetadata.sol";
 
 contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906 {
     error AccessDenied();
@@ -72,9 +72,9 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
     bytes32 private constant _LOW_128_BIT_MASK = 0x00000000000000000000000000000000ffffffffffffffffffffffffffffffff;
 
     mapping(address /* tokenId */ => bytes32 /* salt */) public salts;
-    AddressTokenMetadata public metadataContract;
+    IAddressTokenMetadata public metadataContract;
 
-    constructor(AddressTokenMetadata _metadataContract) {
+    constructor(IAddressTokenMetadata _metadataContract) {
         metadataContract = _metadataContract;
     }
 
@@ -122,7 +122,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
         }
     }
 
-    function upgradeMetadataContract(AddressTokenMetadata _metadataContract) external onlyOwner {
+    function upgradeMetadataContract(IAddressTokenMetadata _metadataContract) external onlyOwner {
         metadataContract = _metadataContract;
         emit BatchMetadataUpdate(0, type(uint256).max);
     }

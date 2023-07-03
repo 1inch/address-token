@@ -3,8 +3,9 @@
 pragma solidity 0.8.20;
 
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
+import { IAddressTokenMetadata } from "./interfaces/IAddressTokenMetadata.sol";
 
-contract AddressTokenMetadata {
+contract AddressTokenMetadata is IAddressTokenMetadata {
     function tokenJSON(uint256 tokenId) external pure returns(string memory) {
         bytes memory accountHex = bytes(Strings.toHexString(tokenId, 20));
         // accountMask[i] will store the length of the repetition of accountHex[i] starting at the index i
