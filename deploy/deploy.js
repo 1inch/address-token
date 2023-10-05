@@ -36,4 +36,4 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     console.log(await addressToken.tokenURI('0x083fc10cE7e97CaFBaE0fE332a9c4384c5f54E45'));
 };
 
-module.exports.skip = async () => false;
+module.exports.skip = async () => true;
