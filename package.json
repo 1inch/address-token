@@ -4,7 +4,7 @@
   "description": "",
   "repository": {
     "type": "git",
-    "url": "git@github.com:zumzoom/solidity-template.git"
+    "url": "git@github.com:1inch/address-token.git"
   },
   "license": "MIT",
   "dependencies": {
