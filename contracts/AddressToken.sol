@@ -74,7 +74,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
     mapping(address /* tokenId */ => bytes32 /* salt */) public salts;
     IAddressTokenMetadata public metadataContract;
 
-    constructor(IAddressTokenMetadata _metadataContract) {
+    constructor(IAddressTokenMetadata _metadataContract, address owner) Ownable(owner) {
         metadataContract = _metadataContract;
     }
 
