@@ -55,7 +55,7 @@
                         \__|  \__| \_______| \_______|\__|       \_______|\_______/ \_______/       \__|  \__|\__|         \__|
 */
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.22;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC4906 } from "@openzeppelin/contracts/interfaces/IERC4906.sol";
