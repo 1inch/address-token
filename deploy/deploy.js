@@ -7,6 +7,7 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
     console.log(`running ${networkName} deploy script`);
     const chainId = await getChainId();
     console.log('network id ', chainId);
+
     if (chainId !== hre.config.networks[networkName].chainId.toString()) {
         console.log(`network chain id: ${hre.config.networks[networkName].chainId}, your chain id ${chainId}`);
         console.log('skipping wrong chain id deployment');
@@ -21,6 +22,12 @@ module.exports = async ({ deployments, getNamedAccounts }) => {
         from: deployer,
         contract: contractName,
         skipIfAlreadyDeployed: true,
+        args: [
+            // TODO: give example with MetadataContract, and owner
+            // '0x0000000000000000000000000000000000000000000000000000000000000000', // Empty MetadataContract
+            // // set owner to msg.sender
+            // ethers.utils.hexZeroPad(deployer, 32),
+        ],
     });
 
     console.log(`${contractName} deployed to: ${contract.address}`);
