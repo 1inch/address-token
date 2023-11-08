@@ -11,7 +11,7 @@ const networks = {
 };
 const etherscan = { apiKey: {}, customChains: [] };
 
-function register(name, chainId, hardfork, url, privateKey, etherscanNetworkName, etherscanKey) {
+function register (name, chainId, hardfork, url, privateKey, etherscanNetworkName, etherscanKey) {
     if (url && privateKey && etherscanKey) {
         networks[name] = {
             url,
@@ -29,7 +29,7 @@ function register(name, chainId, hardfork, url, privateKey, etherscanNetworkName
     }
 }
 
-function registerCustom(name, chainId, hardfork, url, privateKey, etherscanKey, apiURL, browserURL) {
+function registerCustom (name, chainId, hardfork, url, privateKey, etherscanKey, apiURL, browserURL) {
     if (url && privateKey && etherscanKey) {
         register(name, chainId, hardfork, url, privateKey, name, etherscanKey);
         etherscan.customChains.push({ network: name, chainId, urls: { apiURL, browserURL } });
