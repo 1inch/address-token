@@ -29,7 +29,7 @@ function register (name, chainId, url, privateKey, etherscanNetworkName, ethersc
     }
 }
 
-function registerCustom (name, chainId, hardfork, url, privateKey, etherscanKey, apiURL, browserURL) {
+function registerCustom (name, chainId, url, privateKey, etherscanKey, apiURL, browserURL, hardfork = 'paris') {
     if (url && privateKey && etherscanKey) {
         register(name, chainId, hardfork, url, privateKey, name, etherscanKey);
         etherscan.customChains.push({ network: name, chainId, urls: { apiURL, browserURL } });
