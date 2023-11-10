@@ -10,7 +10,7 @@ require('solidity-coverage');
 
 const { networks, etherscan } = require('./hardhat.networks');
 
-function getNetwork() {
+function getNetwork () {
     const index = process.argv.findIndex((arg) => arg === '--network') + 1;
     return index !== 0 ? process.argv[index] : undefined;
 }
