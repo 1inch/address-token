@@ -10,18 +10,24 @@ require('solidity-coverage');
 
 const { networks, etherscan } = require('./hardhat.networks');
 
+function getNetwork () {
+    const index = process.argv.findIndex((arg) => arg === '--network') + 1;
+    return index !== 0 ? process.argv[index] : undefined;
+}
+
 module.exports = {
     etherscan,
     networks,
     solidity: {
         compilers: [
             {
-                version: '0.8.20',
+                version: '0.8.22',
                 settings: {
                     optimizer: {
                         enabled: true,
                         runs: 1000000,
                     },
+                    evmVersion: networks[getNetwork()]?.hardfork || 'shanghai',
                     viaIR: true,
                 },
             },

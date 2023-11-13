@@ -55,7 +55,7 @@
                         \__|  \__| \_______| \_______|\__|       \_______|\_______/ \_______/       \__|  \__|\__|         \__|
 */
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.22;
 
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IERC4906 } from "@openzeppelin/contracts/interfaces/IERC4906.sol";
@@ -74,7 +74,7 @@ contract AddressToken is ERC721("1inch Address NFT", "1ANFT"), Ownable, IERC4906
     mapping(address /* tokenId */ => bytes32 /* salt */) public salts;
     IAddressTokenMetadata public metadataContract;
 
-    constructor(IAddressTokenMetadata _metadataContract) {
+    constructor(IAddressTokenMetadata _metadataContract, address owner) Ownable(owner) {
         metadataContract = _metadataContract;
     }
 

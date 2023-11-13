@@ -5,15 +5,17 @@ const { expect } = require('chai');
 
 describe('AddressToken', async function () {
     async function initContracts () {
+        const [signer] = await ethers.getSigners();
+
         const AddressToken = await ethers.getContractFactory('AddressToken');
-        const addressToken = await AddressToken.deploy(ethers.constants.AddressZero);
+        const addressToken = await AddressToken.deploy(ethers.constants.AddressZero, signer.address);
         await addressToken.deployed();
         const AddressTokenMetadata = await ethers.getContractFactory('AddressTokenMetadata');
         const addressTokenMetadata = await AddressTokenMetadata.deploy();
         await addressTokenMetadata.deployed();
         // this is done in this particular order to keep AddressToken at 0x5FbDB2315678afecb367f032d93F642f64180aa3
         await addressToken.upgradeMetadataContract(addressTokenMetadata.address);
-        const [signer] = await ethers.getSigners();
+
         expect(signer.address).to.be.equal('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
         expect(addressToken.address).to.be.equal('0x5FbDB2315678afecb367f032d93F642f64180aa3');
         return { signer, addressToken };

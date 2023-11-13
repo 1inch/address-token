@@ -11,7 +11,7 @@ const networks = {
 };
 const etherscan = { apiKey: {}, customChains: [] };
 
-function register (name, chainId, url, privateKey, etherscanNetworkName, etherscanKey) {
+function register (name, chainId, url, privateKey, etherscanNetworkName, etherscanKey, hardfork = 'paris') {
     if (url && privateKey && etherscanKey) {
         networks[name] = {
             url,
@@ -20,6 +20,7 @@ function register (name, chainId, url, privateKey, etherscanNetworkName, ethersc
             },
             chainId,
             accounts: [privateKey],
+            hardfork,
         };
         etherscan.apiKey[etherscanNetworkName] = etherscanKey;
         console.log(`Network '${name}' registered`);
@@ -28,14 +29,14 @@ function register (name, chainId, url, privateKey, etherscanNetworkName, ethersc
     }
 }
 
-function registerCustom (name, chainId, url, privateKey, etherscanKey, apiURL, browserURL) {
+function registerCustom (name, chainId, url, privateKey, etherscanKey, apiURL, browserURL, hardfork = 'paris') {
     if (url && privateKey && etherscanKey) {
-        register(name, chainId, url, privateKey, name, etherscanKey);
+        register(name, chainId, hardfork, url, privateKey, name, etherscanKey);
         etherscan.customChains.push({ network: name, chainId, urls: { apiURL, browserURL } });
     }
 }
 
-register('mainnet', 1, process.env.MAINNET_RPC_URL, process.env.MAINNET_PRIVATE_KEY, 'mainnet', process.env.MAINNET_ETHERSCAN_KEY);
+register('mainnet', 1, process.env.MAINNET_RPC_URL, process.env.MAINNET_PRIVATE_KEY, 'mainnet', process.env.MAINNET_ETHERSCAN_KEY, 'shanghai');
 register('bsc', 56, process.env.BSC_RPC_URL, process.env.BSC_PRIVATE_KEY, 'bsc', process.env.BSC_ETHERSCAN_KEY);
 register('kovan', 42, process.env.KOVAN_RPC_URL, process.env.KOVAN_PRIVATE_KEY, 'kovan', process.env.KOVAN_ETHERSCAN_KEY);
 register('optimistic', 10, process.env.OPTIMISTIC_RPC_URL, process.env.OPTIMISTIC_PRIVATE_KEY, 'optimisticEthereum', process.env.OPTIMISTIC_ETHERSCAN_KEY);
