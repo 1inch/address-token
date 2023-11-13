@@ -48,6 +48,6 @@
     "lint:sol:fix": "solhint --max-warnings 0 \"contracts/**/*.sol\" --fix",
     "test": "hardhat test --parallel",
     "test:ci": "hardhat test",
-    "test:trace": "hardhat --traces"
+    "test:trace": "hardhat test --trace"
   }
 }
