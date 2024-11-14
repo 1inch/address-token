@@ -1,5 +1,4 @@
-require('@nomiclabs/hardhat-ethers');
-require('@nomiclabs/hardhat-etherscan');
+require('@nomicfoundation/hardhat-ethers');
 require('@nomicfoundation/hardhat-chai-matchers');
 require('dotenv').config();
 require('hardhat-dependency-compiler');
