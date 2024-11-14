@@ -1,48 +1,43 @@
-const hre = require('hardhat');
-const { ethers } = hre;
+const { ethers } = require('hardhat');
 const { loadFixture } = require('@nomicfoundation/hardhat-network-helpers');
-const { expect } = require('chai');
+const { constants, deployContract, expect } = require('@1inch/solidity-utils');
 
 describe('AddressToken', async function () {
     async function initContracts () {
         const [signer] = await ethers.getSigners();
 
-        const AddressToken = await ethers.getContractFactory('AddressToken');
-        const addressToken = await AddressToken.deploy(ethers.constants.AddressZero, signer.address);
-        await addressToken.deployed();
-        const AddressTokenMetadata = await ethers.getContractFactory('AddressTokenMetadata');
-        const addressTokenMetadata = await AddressTokenMetadata.deploy();
-        await addressTokenMetadata.deployed();
+        const addressToken = await deployContract('AddressToken', [constants.ZERO_ADDRESS, signer.address]);
+        const addressTokenMetadata = await deployContract('AddressTokenMetadata', []);
         // this is done in this particular order to keep AddressToken at 0x5FbDB2315678afecb367f032d93F642f64180aa3
-        await addressToken.upgradeMetadataContract(addressTokenMetadata.address);
+        await addressToken.upgradeMetadataContract(await addressTokenMetadata.getAddress());
 
         expect(signer.address).to.be.equal('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
-        expect(addressToken.address).to.be.equal('0x5FbDB2315678afecb367f032d93F642f64180aa3');
+        expect(addressToken.target).to.be.equal('0x5FbDB2315678afecb367f032d93F642f64180aa3');
         return { signer, addressToken };
     }
 
     describe('Magics', async function () {
         it('should have proper magic for 0x000000a6C09bd7f6Ba10642DBaCe1bE60565A2F8', async function () {
             const { addressToken } = await loadFixture(initContracts);
-            const tokenId = await addressToken.callStatic.mint('0x83e07be8812a93bc76504bc8c10f79c7');
+            const tokenId = await addressToken.mint.staticCall('0x83e07be8812a93bc76504bc8c10f79c7');
             expect(tokenId).to.be.equal('0x000000a6C09bd7f6Ba10642DBaCe1bE60565A2F8');
         });
 
         it('should have proper magic for 0xc07EC7da97D7444F738e955f28F6C91d15000000', async function () {
             const { addressToken } = await loadFixture(initContracts);
-            const tokenId = await addressToken.callStatic.mint('0xa245d3d1f4bc5e70beb85db24b6f4df1');
+            const tokenId = await addressToken.mint.staticCall('0xa245d3d1f4bc5e70beb85db24b6f4df1');
             expect(tokenId).to.be.equal('0xc07EC7da97D7444F738e955f28F6C91d15000000');
         });
 
         it('should have proper magic for 0x6828985368578258349260531646495303581057', async function () {
             const { addressToken } = await loadFixture(initContracts);
-            const tokenId = await addressToken.callStatic.mint('0x4a7beee747938760a0fbd441e3ce93f5');
+            const tokenId = await addressToken.mint.staticCall('0x4a7beee747938760a0fbd441e3ce93f5');
             expect(tokenId).to.be.equal('0x6828985368578258349260531646495303581057');
         });
 
         it('should have proper magic for 0x6666665e4d6a736100A7D8eD5dfBacDf99f29DFf', async function () {
             const { addressToken } = await loadFixture(initContracts);
-            const tokenId = await addressToken.callStatic.mint('0x057b69fd8b880100129d0f0000000000');
+            const tokenId = await addressToken.mint.staticCall('0x057b69fd8b880100129d0f0000000000');
             expect(tokenId).to.be.equal('0x6666665e4d6a736100A7D8eD5dfBacDf99f29DFf');
         });
     });
