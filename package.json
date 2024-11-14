@@ -12,11 +12,12 @@
     "solmate": "6.7.0"
   },
   "devDependencies": {
+    "@1inch/solidity-utils": "6.0.0",
     "@nomicfoundation/hardhat-chai-matchers": "1.0.6",
     "@nomicfoundation/hardhat-network-helpers": "1.0.8",
     "@nomiclabs/hardhat-ethers": "2.2.3",
     "@nomiclabs/hardhat-etherscan": "3.1.7",
-    "chai": "4.3.7",
+    "chai": "4.5.0",
     "dotenv": "16.1.4",
     "eslint": "8.42.0",
     "eslint-config-standard": "17.1.0",
@@ -33,13 +34,13 @@
     "solc": "0.8.22",
     "solhint": "4.0.0",
     "solidity-coverage": "0.8.5",
-    "solidity-docgen": "0.5.17"
+    "solidity-docgen": "0.6.0-beta.36"
   },
   "scripts": {
     "clean": "rimraf artifacts cache coverage coverage.json contracts/hardhat-dependency-compiler",
     "coverage": "hardhat coverage",
     "deploy": "hardhat deploy --network",
-    "docify": "npx solidity-utils-docify",
+    "docify": "yarn hardhat docgen",
     "lint": "yarn run lint:js && yarn run lint:sol",
     "lint:fix": "yarn run lint:js:fix && yarn run lint:sol:fix",
     "lint:js": "eslint .",
