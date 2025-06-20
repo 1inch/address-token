@@ -50,5 +50,8 @@
     "test": "hardhat test --parallel",
     "test:ci": "hardhat test",
     "test:trace": "hardhat test --trace"
+  },
+  "resolutions": {
+    "elliptic": "6.5.7"
   }
 }
